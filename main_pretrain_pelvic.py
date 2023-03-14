@@ -63,7 +63,6 @@ def get_args_parser():
                         help='image input size')
     parser.add_argument('--mask_ratio', default=0.6, type=float,
                         help='Masking ratio (percentage of removed patches).')
-    parser.add_argument('--clamp_out', default=1, type=int, help='whether to clamp decoder output')
     parser.add_argument('--decoder_depth', type=int, default=1)
     parser.add_argument('--decoder_embed_dim', type=int, default=256)
     
@@ -146,8 +145,7 @@ def main(args):
         mask_ratio=args.mask_ratio,
         decoder_depth=args.decoder_depth,
         decoder_embed_dim=args.decoder_embed_dim,
-        clamp_out=args.clamp_out,
-        norm_pix_loss=False
+        norm_pix_loss=True
     )
     model.to(device)
 
