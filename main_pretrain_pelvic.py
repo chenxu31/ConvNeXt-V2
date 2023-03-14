@@ -135,7 +135,7 @@ def main(args):
     else:
         log_writer = None
 
-    dataset = common_pelvic.Dataset(args.data_path, args.modality, n_slices=args.n_slices)
+    dataset = common_pelvic.Dataset(args.data_path, args.modality, n_slices=args.n_slices, new_normalize=True)
     data_loader_train = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 
     # define the model
