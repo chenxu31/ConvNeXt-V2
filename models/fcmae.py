@@ -39,6 +39,7 @@ class FCMAE(nn.Module):
         self.img_size = img_size
         self.depths = depths
         self.imds = dims
+        self.in_chans = in_chans
         self.patch_size = patch_size
         self.mask_ratio = mask_ratio
         self.num_patches = (img_size // patch_size) ** 2
@@ -97,9 +98,9 @@ class FCMAE(nn.Module):
         assert imgs.shape[2] == imgs.shape[3] and imgs.shape[2] % p == 0
 
         h = w = imgs.shape[2] // p
-        x = imgs.reshape(shape=(imgs.shape[0], 3, h, p, w, p))
+        x = imgs.reshape(shape=(imgs.shape[0], self.in_chans, h, p, w, p))
         x = torch.einsum('nchpwq->nhwpqc', x)
-        x = x.reshape(shape=(imgs.shape[0], h * w, p**2 * 3))
+        x = x.reshape(shape=(imgs.shape[0], h * w, p**2 * self.in_chans))
         return x
 
     def unpatchify(self, x):
@@ -111,9 +112,9 @@ class FCMAE(nn.Module):
         h = w = int(x.shape[1]**.5)
         assert h * w == x.shape[1]
         
-        x = x.reshape(shape=(x.shape[0], h, w, p, p, 3))
+        x = x.reshape(shape=(x.shape[0], h, w, p, p, self.in_chans))
         x = torch.einsum('nhwpqc->nchpwq', x)
-        imgs = x.reshape(shape=(x.shape[0], 3, h * p, h * p))
+        imgs = x.reshape(shape=(x.shape[0], self.in_chans, h * p, h * p))
         return imgs
 
     def gen_random_mask(self, x, mask_ratio):
@@ -159,6 +160,7 @@ class FCMAE(nn.Module):
         x = self.decoder(x)
         # pred
         pred = self.pred(x)
+
         return pred
 
     def forward_loss(self, imgs, pred, mask):
