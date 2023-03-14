@@ -32,8 +32,7 @@ def main(device, args):
         mask_ratio=args.mask_ratio,
         decoder_depth=args.decoder_depth,
         decoder_embed_dim=args.decoder_embed_dim,
-        clamp_out=1,
-        norm_pix_loss=False
+        norm_pix_loss=True
     )
     checkpoint = torch.load(args.checkpoint_file)
 
@@ -62,9 +61,9 @@ def main(device, args):
     model.eval()
 
     if args.modality == "ct":
-        test_data, _, _, _ = common_pelvic.load_test_data(args.data_dir)
+        test_data, _, _, _ = common_pelvic.load_test_data(args.data_dir, do_new_normalize=True)
     elif args.modality == "cbct":
-        _, test_data, _, _ = common_pelvic.load_test_data(args.data_dir)
+        _, test_data, _, _ = common_pelvic.load_test_data(args.data_dir, do_new_normalize=True)
     else:
         assert 0
 
